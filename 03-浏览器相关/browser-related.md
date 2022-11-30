@@ -175,7 +175,7 @@ attachEvent——兼容：IE7、IE8； 不支持第三个参数来控制在哪�
 addEventListener——兼容：firefox、chrome、IE、safari、opera；
 
 
-# 绑定事件的运用，以及封装一个多浏览器兼容的绑定事件函数
+## 绑定事件的运用，以及封装一个多浏览器兼容的绑定事件函数
 
 大家常见的一个面试题可能是ul + li，点击每个li alert对应的索引，这里就给大家来写一下看看
 
@@ -287,7 +287,6 @@ function preventDefault(event) {
 
 ### 常见的浏览器请求/响应头/错误码解析
 
-
 #### request header
 ```js
 :method: GET
@@ -301,8 +300,44 @@ origin: https://m.yuanfudao.biz
 referer: https://m.yuanfudao.biz/primary/market/senior-recommend/reserve
 user-agent: Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1
 ```
-#### response header
+#### HTTP request header：host, referer, origin的区别
+> ### host
+> 请求头指明了请求将要**发送到的服务器主机名和端口号**。
+- 如果没有包含端口号，会自动使用被请求服务的默认端口（比如HTTPS URL使用443端口，HTTP URL使用80端口）
 
+- 所有HTTP/1.1 请求报文中必须包含一个Host头字段。对于缺少Host头或者含有超过一个Host头的HTTP/1.1 请求，可能会收到400（Bad Request）状态码。
+
+- 例如：Host: developer.cdn.mozilla.net
+
+> #### refer
+> Referer 请求头包含了当前请求页面的**来源页面**的地址，即表示当前页面是通过此来源页面里的链接进入的。服务端一般使用 Referer 请求头识别访问来源，可能会以此进行统计分析、日志记录以及缓存优化等。
+
+
+- 如果没有包含端口号，会自动使用被请求服务的默认端口（比如HTTPS URL使用443端口，HTTP URL使用80端口）
+
+- 所有HTTP/1.1 请求报文中必须包含一个Host头字段。对于缺少Host头或者含有超过一个Host头的HTTP/1.1 请求，可能会收到400（Bad Request）状态码。
+
+- 例如：Host: developer.cdn.mozilla.net
+- Referer 请求头可能暴露用户的浏览历史，涉及到用户的隐私问题。
+
+- 在以下两种情况下，Referer 不会被发送：
+
+- 来源页面采用的协议为表示本地文件的 "file" 或者 "data" URI；
+- 当前请求页面采用的是非安全协议，而来源页面采用的是安全协议（HTTPS）。
+
+
+> #### origin
+> 请求首部字段 Origin 指示了请求来自于哪个站点。该字段**仅指示服务器名称**，并不包含任何路径信息。该首部用于 CORS 请求或者 POST 请求(MDN中这样写，但是我试了patch/delete方法也会发送origin)。除了不包含路径信息，该字段与 Referer 首部字段相似
+- 例如：Origin: https://developer.mozilla.org
+
+- 组成：协议+域名+端口号
+
+- **注意**：只有跨域请求（可以看到 response 有对应的 header：Access-Control-Allow-Origin），或者同域时发送post请求，才会携带origin请求头。
+如果浏览器不能获取请求源，那么 origin 满足上面情况也会携带，不过其值为null。
+而referer不论何种情况下，只要浏览器能获取到请求源都会携带。如果浏览器如果不能获取请求源，那么请求头中不会携带referer
+
+
+#### response header
 ```js
 access-control-allow-credentials: true
 access-control-allow-origin: https://m.yuanfudao.biz

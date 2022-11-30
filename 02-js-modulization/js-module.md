@@ -304,10 +304,153 @@ define('amdModule', [], (require) => {
 ```
 
 > * 优点：适合在浏览器中异步加载模块
-
 > * 缺点： 会有引入成本，不能按需加载
 
 #### CMD规范
+> 按需加载
+主要应用框架是sea.js
+
+```js
+define('module', (require, exports, module) -> {
+    let $ = require('jquery')
+    // jquery 逻辑
+    ...
+
+    let dep1 = require(./dep1)
+    // dep1 相关逻辑
+})
+```
+> * 优点： 按需加载，依赖就近
+> * 缺点依赖于打包，加载逻辑存在于每个模块中，扩大模块面积
+
+** 面试题5: AMD和CMD的区别 **
+答：依赖就近，按需加载
+
+#### ES6
+> 走向新时代
+
+新增定义
+引入import， export
+```js
+import dep1 from './dep1.js'
+import dep2 from './dep2.js'
+
+let count = 0;
+export const increase = () => count++
+export const reset = () => {
+    count = 0;
+}
+
+// 导出
+export default {
+    increase, reset
+}
+```
+
+模块引入
+```js
+<script type='module' src='esModule.js'></script>
+```
+node中
+```js
+import {increase, reset} from './esModule.js'
+increase();
+reset();
+
+
+import esModule from './esModule.js'
+esModule.increase();
+esModule.reset();
+```
+
+**面试题6: 动态模块**
+考察： export promise
+
+ES11 原生解决方案
+```js
+import('./esModule.js').then(dynamicModule => {
+    dynamicModule.increase();
+})
+```
+
+> * 优点（重要性）： 通过一种最统一的形态整合了js的模块化
+> * 缺点（局限性）：本质上还是运行时的依赖分析
+
+### 解决方案的新思路 - 前端工程化
+#### 背景
+根本问题 - 运行时进行依赖分析
+> 前端的模块化处理方案依赖于运行时分析
+
+解决方案：线下执行 （grunt，gulp，webpack）
+
+```js
+<!doctype html>
+    <script src='main.js'></script>
+    <script>
+        require.config(__FRAME_CONFIG__)
+    </script>
+    <script>
+        require(['a', 'e'], () => {
+            // 业务处理
+        })
+    </script>
+</html>
+```
+```js
+define('a', () => {
+    let b = require('b')
+    let c = require('c')
+
+    export.run = () => {
+        // run
+    }
+})
+```
+
+##### 工程化的实现
+step1: 扫描依赖关系表
+```js
+{
+    a: ['b', 'c'],
+    b: ['d'],
+    e: []
+}
+```
+step2: 重新生成依赖数据模版
+```js
+<!doctype html>
+    <script src='main.js'></script>
+    <script>
+        require.config({
+            "deps': {
+                a: ['b', 'c'],
+                b: ['d'],
+                e: []
+            }
+        })
+    </script>
+    <script>
+        require(['a', 'e'], () => {
+            // 业务处理
+        })
+    </script>
+</html>
+```
+
+step3: 执行工具
+```js
+define('a', ['b', 'c'], () => {
+    // 执行代码
+    export.run = () => {}
+})
+```
+
+> 优点：
+1. 构建时生成配置，运行时执行
+2. 最终转化成执行处理依赖
+3. 可以拓展
+
+#### 完全体 webpack为核心的工程化 + MVVM框架组件化 + 设计模式
 
 
 

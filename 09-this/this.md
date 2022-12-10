@@ -23,7 +23,7 @@
             }
         }
     }
-    console.log('test2', b);
+    console.log('test2', b); // 出错
     course();
 
     if(true) {

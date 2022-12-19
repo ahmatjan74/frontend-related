@@ -1,7 +1,21 @@
 
 
 ### 最近面试题
-#### 1. 克里化
+#### 1. 克里化: 将多个参数的一个函数，转换成单个参数的函数
+```js
+
+const add = (x) => {
+    return function(y) {
+        return x + y;
+    }
+}
+
+const add1 = add(1)
+const add2 = add(2);
+add1(2)
+add2(4);
+```
+compose
 ```js
 
 const filterBoolean = arr => arr.filter(Boolean);
@@ -178,6 +192,8 @@ module.exports = {
 通过结果可以看到，对死代码进行了消除，只有第 7 种，消除失败。
 
 引用： https://zhuanlan.zhihu.com/p/529044034
+
+
 1. monorepo是什么？
 
 
